@@ -1,0 +1,731 @@
+/* ==========================================================================
+   DIABLO II: LORD OF DESTRUCTION — WEBASSEMBLY CLIENT STYLES
+   Aesthetic: Dark Gothic, Fiery Embers, Ornate Antique Gold & Stone
+   ========================================================================== */
+
+:root {
+  --bg-deep: #070709;
+  --bg-card: rgba(16, 16, 22, 0.88);
+  --bg-card-border: rgba(212, 175, 55, 0.22);
+  --bg-dark-hover: rgba(28, 28, 38, 0.95);
+  
+  --gold-primary: #d4af37;
+  --gold-light: #f7d774;
+  --gold-dark: #8c6d1f;
+  
+  --ember-fire: #ff4500;
+  --ember-orange: #ff7b00;
+  --ember-glow: rgba(255, 69, 0, 0.35);
+  
+  --crimson: #a81c1c;
+  --crimson-dark: #630e0e;
+  
+  --text-main: #e2dbce;
+  --text-muted: #958d83;
+  --text-dim: #605c56;
+  
+  --font-gothic: 'Cinzel', 'Cinzel Decorative', Georgia, serif;
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-deep);
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(168, 28, 28, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 80% 80%, rgba(255, 69, 0, 0.05) 0%, transparent 40%),
+    linear-gradient(180deg, #070709 0%, #0d0d12 100%);
+  background-attachment: fixed;
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================================
+   HEADER & TOP BAR
+   ========================================================================== */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(10, 10, 14, 0.92);
+  border-bottom: 2px solid var(--gold-dark);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(212, 175, 55, 0.3);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.game-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--gold-primary);
+  box-shadow: 0 0 15px var(--ember-glow);
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.game-logo:hover {
+  transform: scale(1.05);
+}
+
+.game-title {
+  font-family: var(--font-gothic);
+  font-size: 1.75rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--gold-light);
+  text-shadow: 0 0 12px rgba(255, 69, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.9);
+  line-height: 1.1;
+}
+
+.game-subtitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--ember-orange);
+  margin-top: 2px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.status-pill, .storage-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  background: rgba(20, 20, 28, 0.8);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ember-fire);
+  box-shadow: 0 0 8px var(--ember-fire);
+}
+
+/* ==========================================================================
+   NAVIGATION TABS
+   ========================================================================== */
+.app-nav {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  background: rgba(12, 12, 16, 0.85);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+  overflow-x: auto;
+}
+
+.nav-tab {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-gothic);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.25s ease;
+}
+
+.nav-tab:hover {
+  color: var(--gold-light);
+  background: rgba(30, 30, 42, 0.6);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.nav-tab.active {
+  color: var(--gold-light);
+  background: linear-gradient(180deg, rgba(60, 40, 20, 0.6) 0%, rgba(20, 20, 28, 0.9) 100%);
+  border: 1px solid var(--gold-primary);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.2), inset 0 1px 0 rgba(247, 215, 116, 0.3);
+}
+
+/* ==========================================================================
+   MAIN CONTENT & TABS
+   ========================================================================== */
+.main-container {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.tab-panel {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   GAME VIEWPORT (CANVAS)
+   ========================================================================== */
+.game-viewport-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.viewport-toolbar {
+  width: 800px;
+  max-width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  background: rgba(16, 16, 24, 0.9);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.85rem;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.toolbar-tag {
+  background: rgba(0, 255, 102, 0.15);
+  color: #00ff66;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 0.75rem;
+  border: 1px solid rgba(0, 255, 102, 0.3);
+}
+
+.canvas-container {
+  width: 800px;
+  height: 600px;
+  max-width: 100%;
+  background: #000;
+  border: 3px solid var(--gold-dark);
+  box-shadow: 
+    0 0 30px rgba(0, 0, 0, 0.9),
+    0 0 15px rgba(212, 175, 55, 0.25),
+    inset 0 0 20px rgba(0, 0, 0, 0.8);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#game-canvas {
+  width: 800px;
+  height: 600px;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  outline: none;
+}
+
+.viewport-footer {
+  width: 800px;
+  max-width: 100%;
+}
+
+.hint-text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  background: rgba(20, 20, 28, 0.6);
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius-sm);
+  border-left: 3px solid var(--gold-primary);
+}
+
+/* ==========================================================================
+   CARDS & PANELS
+   ========================================================================== */
+.panel-card {
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--border-radius-md);
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+}
+
+.card-header {
+  margin-bottom: 1.5rem;
+}
+
+.card-header h2 {
+  font-family: var(--font-gothic);
+  font-size: 1.5rem;
+  color: var(--gold-light);
+  letter-spacing: 1px;
+}
+
+.card-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-top: 0.4rem;
+}
+
+/* ==========================================================================
+   DROP ZONE
+   ========================================================================== */
+.drop-zone {
+  border: 2px dashed rgba(212, 175, 55, 0.4);
+  background: rgba(24, 24, 34, 0.5);
+  border-radius: var(--border-radius-md);
+  padding: 3rem 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  margin-bottom: 2rem;
+}
+
+.drop-zone:hover, .drop-zone.drag-active {
+  border-color: var(--ember-orange);
+  background: rgba(40, 25, 20, 0.6);
+  box-shadow: 0 0 25px rgba(255, 69, 0, 0.25);
+}
+
+.drop-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 10px var(--gold-primary));
+}
+
+.drop-zone h3 {
+  font-family: var(--font-gothic);
+  font-size: 1.25rem;
+  color: var(--gold-light);
+  margin-bottom: 0.5rem;
+}
+
+.drop-zone p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.drop-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   BUTTONS & BADGES
+   ========================================================================== */
+.btn-primary, .btn-secondary, .btn-action {
+  font-family: var(--font-gothic);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 0.65rem 1.4rem;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, #b8860b 0%, #7b5900 100%);
+  color: #fff;
+  border: 1px solid var(--gold-light);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(180deg, #d4af37 0%, #996515 100%);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+}
+
+.btn-secondary {
+  background: rgba(30, 30, 42, 0.8);
+  color: var(--gold-light);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.btn-secondary:hover {
+  background: rgba(45, 45, 60, 0.9);
+  border-color: var(--gold-primary);
+}
+
+.btn-action {
+  background: rgba(24, 24, 34, 0.9);
+  color: var(--text-main);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 0.4rem 0.9rem;
+  font-size: 0.8rem;
+}
+
+.btn-action:hover {
+  background: rgba(40, 40, 56, 0.9);
+  color: var(--gold-light);
+  border-color: var(--gold-primary);
+}
+
+.btn-sm {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.75rem;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-delete {
+  background: rgba(168, 28, 28, 0.3);
+  color: #ff6b6b;
+  border: 1px solid rgba(168, 28, 28, 0.6);
+}
+
+.btn-delete:hover {
+  background: var(--crimson);
+  color: #fff;
+}
+
+.btn-export-char {
+  background: rgba(212, 175, 55, 0.2);
+  color: var(--gold-light);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+}
+
+.btn-export-char:hover {
+  background: var(--gold-primary);
+  color: #000;
+}
+
+.btn-text-danger {
+  background: none;
+  border: none;
+  color: #ff6b6b;
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.btn-text-danger:hover {
+  color: #ff3b00;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.badge-success {
+  background: rgba(46, 125, 50, 0.25);
+  color: #81c784;
+  border: 1px solid rgba(76, 175, 80, 0.4);
+}
+
+.badge-danger {
+  background: rgba(198, 40, 40, 0.25);
+  color: #e57373;
+  border: 1px solid rgba(239, 83, 80, 0.4);
+}
+
+.badge-neutral {
+  background: rgba(100, 100, 110, 0.25);
+  color: #b0bec5;
+  border: 1px solid rgba(144, 164, 174, 0.3);
+}
+
+/* ==========================================================================
+   STORAGE PROGRESS BAR
+   ========================================================================== */
+.storage-bar-wrapper {
+  margin-bottom: 2rem;
+  background: rgba(12, 12, 18, 0.6);
+  padding: 1rem;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.storage-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-muted);
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff7b00 0%, #ff4500 100%);
+  box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+  transition: width 0.4s ease;
+}
+
+/* ==========================================================================
+   MPQ & CHARACTER LISTS
+   ========================================================================== */
+.mpq-list-container h3, .characters-container h3 {
+  font-family: var(--font-gothic);
+  color: var(--gold-light);
+  font-size: 1.15rem;
+  margin-bottom: 1rem;
+}
+
+.mpq-grid, .character-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.mpq-item, .char-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  background: rgba(20, 20, 28, 0.7);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: var(--border-radius-sm);
+  transition: all 0.2s;
+}
+
+.mpq-item:hover, .char-item:hover {
+  background: rgba(30, 30, 42, 0.85);
+  border-color: rgba(212, 175, 55, 0.35);
+}
+
+.mpq-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mpq-icon {
+  font-size: 1.25rem;
+  width: 24px;
+  text-align: center;
+}
+
+.status-ready .mpq-icon { color: #81c784; }
+.status-missing .mpq-icon { color: #e57373; }
+.status-optional .mpq-icon { color: #90a4ae; }
+
+.mpq-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.mpq-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-dim);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   CONFIG & ARCHITECTURE GRID
+   ========================================================================== */
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.config-card {
+  background: rgba(20, 20, 28, 0.75);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: 1.25rem;
+}
+
+.config-card h3 {
+  font-family: var(--font-gothic);
+  color: var(--gold-light);
+  font-size: 1.05rem;
+  margin-bottom: 0.85rem;
+}
+
+.config-card ul {
+  list-style: none;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.config-card strong {
+  color: var(--text-main);
+}
+
+.code-box {
+  background: #000;
+  padding: 0.75rem;
+  border-radius: var(--border-radius-sm);
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: #ff9d00;
+  overflow-x: auto;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.path-badge {
+  background: #000;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.8rem;
+  color: #81c784;
+  margin: 0.5rem 0;
+  word-break: break-all;
+}
+
+/* ==========================================================================
+   SYSTEM CONSOLE
+   ========================================================================== */
+.console-box {
+  background: #0a0a0f;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: var(--border-radius-sm);
+  height: 420px;
+  overflow-y: auto;
+  padding: 1rem;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.82rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.log-line {
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+.log-info { color: #81d4fa; }
+.log-success { color: #a5d6a7; }
+.log-warn { color: #ffe082; }
+.log-error { color: #ef9a9a; }
+.log-stdout { color: #eeeeee; }
+.log-stderr { color: #ff8a80; }
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+.app-footer {
+  margin-top: auto;
+  padding: 1.5rem 2rem;
+  background: rgba(8, 8, 12, 0.95);
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.footer-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.footer-links {
+  margin-top: 0.5rem;
+}
+
+.footer-links a {
+  color: var(--gold-primary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: var(--gold-light);
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+@media (max-width: 860px) {
+  .app-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .canvas-container {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+  
+  #game-canvas {
+    width: 100%;
+    height: 100%;
+  }
+}

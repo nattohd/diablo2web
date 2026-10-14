@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diablo II: Lord of Destruction — WebAssembly Client</title>
+  <meta name="description" content="Portabilidad de Diablo II y Lord of Destruction al navegador mediante WebAssembly, Emscripten y Virtual File System en IndexedDB.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Cinzel+Decorative:wght@700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header / Top Bar -->
+  <header class="app-header">
+    <div class="header-left">
+      <img src="assets/d2_emblem.jpg" alt="Diablo II Emblem" class="game-logo" id="header-logo">
+      <div class="header-titles">
+        <h1 class="game-title">DIABLO II</h1>
+        <div class="game-subtitle">LORD OF DESTRUCTION &bull; WEBASSEMBLY PORT</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        <span id="game-status-badge" class="badge badge-danger">0/7 Archivos Esenciales</span>
+      </div>
+      <div class="storage-pill" title="Espacio ocupado en almacenamiento local">
+        <span class="icon-disc">💾</span>
+        <span id="storage-usage">Calculando cuota...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="app-nav">
+    <button class="nav-tab active" data-tab="game" id="tab-btn-game">
+      <span class="tab-icon">⚔️</span> Pantalla de Juego
+    </button>
+    <button class="nav-tab" data-tab="mpqs" id="tab-btn-mpqs">
+      <span class="tab-icon">📦</span> Archivos MPQ (Datos)
+    </button>
+    <button class="nav-tab" data-tab="saves" id="tab-btn-saves">
+      <span class="tab-icon">🛡️</span> Personajes (.d2s)
+    </button>
+    <button class="nav-tab" data-tab="config" id="tab-btn-config">
+      <span class="tab-icon">⚙️</span> Arquitectura & WASM
+    </button>
+    <button class="nav-tab" data-tab="console" id="tab-btn-console">
+      <span class="tab-icon">📜</span> Consola de Registro
+    </button>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main class="main-container">
+
+    <!-- Tab 1: Game Screen (Canvas) -->
+    <section id="tab-game" class="tab-panel active">
+      <div class="game-viewport-wrapper">
+        <div class="viewport-toolbar">
+          <div class="toolbar-group">
+            <span class="toolbar-label">Resolución: <strong>800 × 600</strong> (Lord of Destruction)</span>
+            <span class="toolbar-tag">60 FPS</span>
+          </div>
+          <div class="toolbar-group">
+            <button id="btn-pointerlock" class="btn-action" title="Captura el cursor dentro de la ventana para combate">
+              🎯 Capturar Ratón (Pointer Lock)
+            </button>
+            <button id="btn-fullscreen" class="btn-action" title="Modo pantalla completa">
+              ⛶ Pantalla Completa
+            </button>
+          </div>
+        </div>
+
+        <div id="canvas-container" class="canvas-container">
+          <canvas id="game-canvas" width="800" height="600" tabindex="0"></canvas>
+        </div>
+
+        <div class="viewport-footer">
+          <div class="hint-text">
+            💡 <strong>Instrucciones rápidas:</strong> Ve a la pestaña <em>"Archivos MPQ"</em> para arrastrar tus archivos originales de Diablo II. Se guardarán en tu navegador para que no tengas que subirlos cada vez.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: MPQs / Storage Manager -->
+    <section id="tab-mpqs" class="tab-panel">
+      <div class="panel-card">
+        <div class="card-header">
+          <h2>Gestor de Archivos Originales (MPQs)</h2>
+          <p class="card-subtitle">
+            Para respetar los derechos de autor de Blizzard Entertainment, este cliente web no distribuye assets propietarios. Arrastra tu carpeta de Diablo II o selecciona tus archivos <code>.mpq</code> para montarlos en el sistema de archivos virtual (IndexedDB).
+          </p>
+        </div>
+
+        <!-- Dropzone -->
+        <div id="drop-zone" class="drop-zone">
+          <div class="drop-icon">📂</div>
+          <h3>Arrastra aquí tus archivos MPQ o carpeta de Diablo II</h3>
+          <p>Soporta drag &amp; drop de archivos múltiples o selección directa</p>
+          <div class="drop-buttons">
+            <label class="btn-primary">
+              Seleccionar Archivos (.mpq)
+              <input type="file" id="file-input" multiple accept=".mpq,.exe,.d2s" style="display: none;">
+            </label>
+            <label class="btn-secondary">
+              Seleccionar Carpeta Completa
+              <input type="file" id="folder-input" webkitdirectory directory multiple style="display: none;">
+            </label>
+          </div>
+        </div>
+
+        <!-- Storage Progress & Actions -->
+        <div class="storage-bar-wrapper">
+          <div class="storage-bar-labels">
+            <span>Uso de Cuota en Disco (IndexedDB)</span>
+            <button id="btn-clear-storage" class="btn-text-danger">⚠️ Borrar todos los datos locales</button>
+          </div>
+          <div class="progress-track">
+            <div id="storage-bar" class="progress-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- Checklist of MPQ Files -->
+        <div class="mpq-list-container">
+          <h3>Estado de Archivos Requeridos</h3>
+          <div id="mpq-list" class="mpq-grid">
+            <!-- Rellenado dinámicamente por app.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 3: Character Saves (.d2s) -->
+    <section id="tab-saves" class="tab-panel">
+      <div class="panel-card">
+        <div class="card-header">
+          <h2>Partidas Guardadas y Personajes (.d2s)</h2>
+          <p class="card-subtitle">
+            Tus personajes se guardan automáticamente en el navegador a través de <code>IDBFS</code> montado en <code>/saves/</code>. Puedes exportar o importar personajes para usarlos en Diablo II de PC.
+          </p>
+        </div>
+
+        <div class="save-actions-bar">
+          <label class="btn-primary">
+            📥 Importar Personaje (.d2s)
+            <input type="file" id="character-file-input" accept=".d2s" style="display: none;">
+          </label>
+        </div>
+
+        <div class="characters-container">
+          <h3>Personajes Disponibles</h3>
+          <div id="character-list" class="character-grid">
+            <div class="empty-state">No hay partidas guardadas registradas.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 4: Architecture & Configuration -->
+    <section id="tab-config" class="tab-panel">
+      <div class="panel-card">
+        <div class="card-header">
+          <h2>Arquitectura Técnica del Port Web</h2>
+          <p class="card-subtitle">Detalles de implementación basados en el Plan de Portabilidad WebAssembly.</p>
+        </div>
+
+        <div class="config-grid">
+          <div class="config-card">
+            <h3>⚙️ Motor de Ejecución</h3>
+            <ul>
+              <li><strong>Compilador:</strong> Emscripten (Clang / LLVM) &rarr; WebAssembly (WASM 32-bit)</li>
+              <li><strong>Subsistema Gráfico:</strong> SDL2 mapeado a HTML5 Canvas 2D / WebGL 2.0</li>
+              <li><strong>Audio:</strong> SDL2 Audio Mixer mapeado a Web Audio API (44.1 kHz, 16-bit estéreo)</li>
+              <li><strong>Control:</strong> Pointer Lock API para mouse nativo de ARPG sin salir de ventana</li>
+            </ul>
+          </div>
+
+          <div class="config-card">
+            <h3>💾 Manejo de Memoria (1.9 GB)</h3>
+            <ul>
+              <li><strong>Límite WASM:</strong> Espacio de direccionamiento de 32 bits (máx. 2-3 GB por pestaña)</li>
+              <li><strong>Estrategia VFS:</strong> Streaming de bloques y lectura por demanda en StormLib</li>
+              <li><strong>Persistencia:</strong> IndexedDB con <code>navigator.storage.persist()</code> permanente</li>
+              <li><strong>Save Games:</strong> Sincronización bidireccional mediante <code>FS.syncfs</code></li>
+            </ul>
+          </div>
+
+          <div class="config-card">
+            <h3>🛡️ Flags de Compilación Emscripten</h3>
+            <pre class="code-box"><code>emcc src/main.cpp \
+  -s USE_SDL=2 \
+  -s ALLOW_MEMORY_GROWTH=1 \
+  -s INITIAL_MEMORY=512MB \
+  -s MAXIMUM_MEMORY=2048MB \
+  -s ASYNCIFY \
+  -s IDBFS \
+  -O3 -o public/d2engine.js</code></pre>
+          </div>
+
+          <div class="config-card">
+            <h3>📁 Directorio de Desarrollo Local</h3>
+            <p>Puedes copiar tus archivos directamente a:</p>
+            <div class="path-badge"><code>c:\desarrollos\diablo2web\original_game\</code></div>
+            <p>Y verificar con:</p>
+            <div class="path-badge"><code>python verify_game.py</code></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 5: System Console -->
+    <section id="tab-console" class="tab-panel">
+      <div class="panel-card">
+        <div class="card-header">
+          <h2>Consola del Motor y Emscripten</h2>
+          <p class="card-subtitle">Registros en tiempo real de inicialización, eventos de VFS y salida estándar.</p>
+        </div>
+        <div id="console-output" class="console-box">
+          <div class="log-line log-info">[SISTEMA] Consola WebAssembly iniciada. Esperando eventos del motor...</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <p>
+        Diablo II es una marca registrada de <strong>Blizzard Entertainment, Inc.</strong> Este proyecto es una reimplementación de código abierto con fines de investigación, preservación e interoperabilidad.
+      </p>
+      <div class="footer-links">
+        <a href="plan_de_portabilidad_diablo_ii_webassembly.md" target="_blank">Plan de Portabilidad</a>
+        &bull;
+        <a href="original_game/README.md" target="_blank">Guía de Archivos Originales</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/mpq-inspector.js"></script>
+  <script src="js/vfs-storage.js"></script>
+  <script src="js/wasm-loader.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

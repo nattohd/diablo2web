@@ -1,0 +1,21 @@
+{
+  "name": "diablo2web",
+  "version": "0.1.0",
+  "description": "Diablo II: Lord of Destruction en el navegador vía WebAssembly y Emscripten",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "verify": "python verify_game.py"
+  },
+  "keywords": [
+    "diablo2",
+    "webassembly",
+    "wasm",
+    "emscripten",
+    "retrogaming",
+    "game-port"
+  ],
+  "author": "Diablo2Web Team",
+  "license": "MIT"
+}
